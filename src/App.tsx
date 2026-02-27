@@ -785,7 +785,6 @@ const DossierView = ({ onBack, onOpenIntro, onOpenGallery, onOpenHisui }: { onBa
   const [paths, setPaths] = useState<{ id: number; points: { x: number; y: number }[] }[]>([]);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isFlipping, setIsFlipping] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollContentRef = useRef<HTMLDivElement>(null);
   const isDraggingScroll = useRef(false);
@@ -797,12 +796,7 @@ const DossierView = ({ onBack, onOpenIntro, onOpenGallery, onOpenHisui }: { onBa
   ];
 
   const handleNextImage = () => {
-    if (isFlipping) return;
-    setIsFlipping(true);
-    setTimeout(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % images.length);
-      setIsFlipping(false);
-    }, 300); // Half of the animation duration
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -954,24 +948,31 @@ const DossierView = ({ onBack, onOpenIntro, onOpenGallery, onOpenHisui }: { onBa
               <motion.div 
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="relative z-10 w-[96vh] h-[96vw] md:w-[100%] md:h-auto lg:w-[95%] xl:w-[90%] max-w-none mx-auto rotate-90 md:rotate-0 flex items-center justify-center"
+                className="relative z-10 w-[140vh] h-[140vw] md:w-[100%] md:h-auto lg:w-[95%] xl:w-[90%] max-w-none mx-auto rotate-90 md:rotate-0 flex items-center justify-center"
               >
-                <motion.div 
+                <div 
                   className="w-full h-full relative cursor-pointer pointer-events-auto flex items-center justify-center"
-                  animate={{ rotateY: isFlipping ? 90 : 0 }}
-                  transition={{ duration: 0.3 }}
                   onClick={handleNextImage}
                 >
-                  <img 
-                    src={images[currentImageIndex]} 
-                    alt="Paper Record" 
-                    className="w-full h-full md:w-full md:h-auto object-contain opacity-90 mix-blend-multiply select-none pointer-events-none"
-                    draggable="false"
-                  />
-                  <div className="absolute bottom-8 right-8 font-serif italic text-black/60 text-lg sm:text-xl pointer-events-none opacity-70 mix-blend-multiply">
-                    다음 장 →
+                  <AnimatePresence>
+                    <motion.img 
+                      key={currentImageIndex}
+                      src={images[currentImageIndex]} 
+                      alt="Paper Record" 
+                      initial={{ opacity: 0, filter: 'blur(20px)' }}
+                      animate={{ opacity: 0.9, filter: 'blur(0px)' }}
+                      exit={{ opacity: 0, filter: 'blur(20px)' }}
+                      transition={{ duration: 1.5, ease: "easeInOut" }}
+                      className="absolute inset-0 w-full h-full md:relative md:inset-auto md:w-full md:h-auto object-contain scale-[1.6] md:scale-100 mix-blend-multiply select-none pointer-events-none"
+                      draggable="false"
+                    />
+                  </AnimatePresence>
+                  
+                  {/* Next Page Button - Inside the rotated container to match image rotation */}
+                  <div className="absolute bottom-8 right-8 z-50 font-brush text-black text-2xl sm:text-3xl pointer-events-none mix-blend-multiply">
+                    다음장 <span className="text-base sm:text-lg">click!</span>
                   </div>
-                </motion.div>
+                </div>
               </motion.div>
             </div>
           </div>
@@ -1684,7 +1685,7 @@ export default function App() {
           <div className="flex items-center gap-2">
             <button 
               onClick={toggleBgm}
-              className="p-3 bg-white/5 backdrop-blur-md rounded-full border border-white/10 text-white hover:bg-white/10 transition-all"
+              className={`p-3 backdrop-blur-md rounded-full border transition-all ${view === 'dossier' ? 'bg-black/5 border-black/10 text-black hover:bg-black/10' : 'bg-white/5 border-white/10 text-white hover:bg-white/10'}`}
             >
               {isBgmMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
             </button>
@@ -1695,12 +1696,12 @@ export default function App() {
               step="0.01" 
               value={volume} 
               onChange={(e) => setVolume(parseFloat(e.target.value))}
-              className="w-16 sm:w-24 accent-white cursor-pointer"
+              className={`w-16 sm:w-24 cursor-pointer ${view === 'dossier' ? 'accent-black' : 'accent-white'}`}
             />
             <div className="relative">
               <button 
                 onClick={() => setShowTrackList(!showTrackList)}
-                className="px-4 py-2 bg-white/5 backdrop-blur-md rounded-full border border-white/10 text-white text-xs uppercase tracking-widest hover:bg-white/10 transition-all"
+                className={`px-4 py-2 backdrop-blur-md rounded-full border text-xs uppercase tracking-widest transition-all ${view === 'dossier' ? 'bg-black/5 border-black/10 text-black hover:bg-black/10' : 'bg-white/5 border-white/10 text-white hover:bg-white/10'}`}
               >
                 {bgmTracks[bgmIndex].name}
               </button>
@@ -1710,13 +1711,13 @@ export default function App() {
                     initial={{ opacity: 0, height: 0, y: -10 }}
                     animate={{ opacity: 1, height: 'auto', y: 0 }}
                     exit={{ opacity: 0, height: 0, y: -10 }}
-                    className="absolute top-full left-0 mt-2 w-48 overflow-hidden bg-black/50 backdrop-blur-md border border-white/10 rounded-xl"
+                    className={`absolute top-full left-0 mt-2 w-48 overflow-hidden backdrop-blur-md border rounded-xl ${view === 'dossier' ? 'bg-white/90 border-black/10 shadow-lg' : 'bg-black/50 border-white/10'}`}
                   >
                     {bgmTracks.map((track, idx) => (
                       <button
                         key={idx}
                         onClick={() => { setBgmIndex(idx); setShowTrackList(false); }}
-                        className={`block w-full text-left px-4 py-2 text-xs uppercase tracking-widest hover:bg-white/10 transition-colors ${bgmIndex === idx ? 'text-white font-bold' : 'text-white/50'}`}
+                        className={`block w-full text-left px-4 py-2 text-xs uppercase tracking-widest transition-colors ${view === 'dossier' ? (bgmIndex === idx ? 'text-black font-bold' : 'text-black/50 hover:bg-black/5') : (bgmIndex === idx ? 'text-white font-bold' : 'text-white/50 hover:bg-white/10')}`}
                       >
                         {track.name}
                       </button>
@@ -1728,14 +1729,14 @@ export default function App() {
             
             {/* Audio Progress Bar */}
             <div 
-              className="w-24 h-1 bg-white/10 rounded-full overflow-hidden cursor-pointer group relative"
+              className={`w-24 h-1 rounded-full overflow-hidden cursor-pointer group relative ${view === 'dossier' ? 'bg-black/10' : 'bg-white/10'}`}
               onClick={handleAudioSeek}
             >
               <div 
-                className="h-full bg-white transition-all duration-100"
+                className={`h-full transition-all duration-100 ${view === 'dossier' ? 'bg-black' : 'bg-white'}`}
                 style={{ width: `${audioProgress}%` }}
               />
-              <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity ${view === 'dossier' ? 'bg-black/20' : 'bg-white/20'}`} />
             </div>
           </div>
         </div>
