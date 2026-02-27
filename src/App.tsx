@@ -948,30 +948,25 @@ const DossierView = ({ onBack, onOpenIntro, onOpenGallery, onOpenHisui }: { onBa
               <motion.div 
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="relative z-10 w-[140vh] h-[140vw] md:w-[100%] md:h-auto lg:w-[95%] xl:w-[90%] max-w-none mx-auto rotate-90 md:rotate-0 flex items-center justify-center"
+                className="relative z-10 w-[140vh] h-[140vw] md:w-[90vw] md:h-[90vh] max-w-none mx-auto rotate-90 md:rotate-0 flex items-center justify-center"
               >
                 <div 
                   className="w-full h-full relative cursor-pointer pointer-events-auto flex items-center justify-center"
                   onClick={handleNextImage}
                 >
-                  <AnimatePresence>
+                  <AnimatePresence initial={false}>
                     <motion.img 
                       key={currentImageIndex}
                       src={images[currentImageIndex]} 
                       alt="Paper Record" 
-                      initial={{ opacity: 0, filter: 'blur(20px)' }}
-                      animate={{ opacity: 0.9, filter: 'blur(0px)' }}
-                      exit={{ opacity: 0, filter: 'blur(20px)' }}
-                      transition={{ duration: 1.5, ease: "easeInOut" }}
-                      className="absolute inset-0 w-full h-full md:relative md:inset-auto md:w-full md:h-auto object-contain scale-[1.6] md:scale-100 mix-blend-multiply select-none pointer-events-none"
+                      initial={{ opacity: 0, x: 100, filter: 'blur(10px)' }}
+                      animate={{ opacity: 0.9, x: 0, filter: 'blur(0px)' }}
+                      exit={{ opacity: 0, x: -100, filter: 'blur(10px)' }}
+                      transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+                      className="absolute inset-0 w-full h-full object-contain scale-[1.6] md:scale-110 mix-blend-multiply select-none pointer-events-none"
                       draggable="false"
                     />
                   </AnimatePresence>
-                  
-                  {/* Next Page Button - Inside the rotated container to match image rotation */}
-                  <div className="absolute bottom-8 right-8 z-50 font-brush text-black text-2xl sm:text-3xl pointer-events-none mix-blend-multiply">
-                    다음장 <span className="text-base sm:text-lg">click!</span>
-                  </div>
                 </div>
               </motion.div>
             </div>
