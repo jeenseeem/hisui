@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;1,400&family=JetBrains+Mono:wght@400&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+body {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  background-color: #000;
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M16 2L19 13L30 16L19 19L16 30L13 19L2 16L13 13L16 2Z" fill="%23333" stroke="white" stroke-width="1.5"/><circle cx="16" cy="16" r="3" fill="white"/></svg>') 16 16, auto;
+}
+
+/* Ensure interactive elements also show the cursor or a pointer */
+button, a, .cursor-pointer {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M16 2L19 13L30 16L19 19L16 30L13 19L2 16L13 13L16 2Z" fill="%23666" stroke="white" stroke-width="1.5"/><circle cx="16" cy="16" r="3" fill="white"/></svg>') 16 16, pointer;
+}
